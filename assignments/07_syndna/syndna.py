@@ -13,7 +13,8 @@ def get_args():
 
     parser = argparse.ArgumentParser(
         description='Create synthetic sequences',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        usage='%(prog)s [-h] [-o str] [-t str] [-n int] [-m int] [-x int] [-p float] [-s int]')
 
     parser.add_argument('-o',
                        '--outfile',
