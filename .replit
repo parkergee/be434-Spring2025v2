@@ -1,4 +1,4 @@
-modules = ["bash", "python-3.11", "python-3.12"]
+modules = ["python-3.12", "bash"]
 run = "~/workspace/assignments/grade_hw.sh"
 
 [nix]
