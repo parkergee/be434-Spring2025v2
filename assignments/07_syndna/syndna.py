@@ -13,8 +13,7 @@ def get_args():
 
     parser = argparse.ArgumentParser(
         description='Create synthetic sequences',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        usage='%(prog)s [-h] [-o str] [-t str] [-n int] [-m int] [-x int] [-p float] [-s int]')
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('-o',
                        '--outfile',
@@ -29,7 +28,7 @@ def get_args():
                        metavar='str',
                        type=str,
                        default='dna',
-                       choices=['dna', 'rna'])
+                       choices=['dna', 'rna', 'DNA', 'RNA'])
 
     parser.add_argument('-n',
                        '--numseqs',
@@ -71,6 +70,7 @@ def get_args():
     if not 0 <= args.pctgc <= 1:
         parser.error(f'--pctgc "{args.pctgc}" must be between 0 and 1')
 
+    args.seqtype = args.seqtype.lower()
     return args
 
 def create_pool(pctgc, max_len, seq_type):
@@ -91,7 +91,7 @@ def create_pool(pctgc, max_len, seq_type):
         pool += ('A' * at_remaining + 'C' * gc_remaining + 
                 'G' * gc_remaining + t_or_u * at_remaining)
     
-    return pool
+    return pool * 2  # Double the pool size to ensure enough bases for sampling
 
 def main():
     """Make synthetic sequences"""
