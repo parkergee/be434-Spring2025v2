@@ -73,9 +73,17 @@ def get_args():
     args.seqtype = args.seqtype.lower()
     return args
 
+def validate_sequence(seq, seq_type):
+    """Validate that sequence contains only valid bases"""
+    valid_bases = {'dna': set('ACGT'), 'rna': set('ACGU')}
+    return all(base in valid_bases[seq_type.lower()] for base in seq.upper())
+
 def create_pool(pctgc, max_len, seq_type):
     """Create the pool of bases"""
     
+    if seq_type.lower() not in ['dna', 'rna']:
+        raise ValueError(f'Invalid sequence type: {seq_type}')
+        
     t_or_u = 'T' if seq_type.lower() == 'dna' else 'U'
     num_gc = int(pctgc * max_len / 2)  # Split GC between G and C
     num_at = int((1 - pctgc) * max_len / 2)  # Split AT/AU between A and T/U
