@@ -75,15 +75,22 @@ def get_args():
 def create_pool(pctgc, max_len, seq_type):
     """Create the pool of bases"""
     
-    t_or_u = 'T' if seq_type == 'dna' else 'U'
-    num_gc = int((pctgc / 2) * max_len)
-    num_at = int(((1 - pctgc) / 2) * max_len)
-    pool = 'A' * num_at + 'C' * num_gc + 'G' * num_gc + t_or_u * num_at
-
-    for _ in range(max_len - len(pool)):
-        pool += random.choice(pool)
-
-    return ''.join(sorted(pool))
+    t_or_u = 'T' if seq_type.lower() == 'dna' else 'U'
+    num_gc = int(pctgc * max_len / 2)  # Split GC between G and C
+    num_at = int((1 - pctgc) * max_len / 2)  # Split AT/AU between A and T/U
+    
+    # Create the pool with the correct proportions
+    pool = ('A' * num_at + 'C' * num_gc + 'G' * num_gc + t_or_u * num_at)
+    
+    # Add any remaining bases to maintain proportions
+    remaining = max_len - len(pool)
+    if remaining > 0:
+        gc_remaining = int(pctgc * remaining / 2)
+        at_remaining = remaining - 2 * gc_remaining
+        pool += ('A' * at_remaining + 'C' * gc_remaining + 
+                'G' * gc_remaining + t_or_u * at_remaining)
+    
+    return pool
 
 def main():
     """Make synthetic sequences"""
@@ -92,15 +99,11 @@ def main():
     random.seed(args.seed)
     pool = create_pool(args.pctgc, args.maxlen, args.seqtype)
 
-    out_fh = open(args.outfile, 'wt')
-    
-    for i in range(args.numseqs):
-        seq_len = random.randint(args.minlen, args.maxlen)
-        bases = random.sample(pool, seq_len)
-        seq = ''.join(bases)
-        out_fh.write(f'>{i+1}\n{seq}\n')
-
-    out_fh.close()
+    with open(args.outfile, 'wt') as out_fh:
+        for i in range(args.numseqs):
+            seq_len = random.randint(args.minlen, args.maxlen)
+            seq = ''.join(random.sample(pool, seq_len))
+            out_fh.write(f'>{i+1}\n{seq}\n')
 
     print(f'Done, wrote {args.numseqs} {args.seqtype.upper()} sequences to "{args.outfile}".')
 
