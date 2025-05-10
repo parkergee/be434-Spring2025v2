@@ -7,10 +7,9 @@ import re
 import string
 from subprocess import getstatusoutput
 from Bio import SeqIO
-#from Bio.SeqUtils import GC
-from Bio.SeqUtils import gc_fraction
 from numpy import mean
 from itertools import chain
+from syndna import gc_fraction
 
 prg = './syndna.py'
 
@@ -33,13 +32,13 @@ def test_exists():
 
 
 # --------------------------------------------------
-#def test_usage():
-    #"""usage"""
+def test_usage():
+    """usage"""
 
-   # for flag in ['-h', '--help']:
-   #     rv, out = getstatusoutput('{} {}'.format(prg, flag))
-   #     assert rv == 0
-   #     assert re.match("usage", out, re.IGNORECASE)
+    for flag in ['-h', '--help']:
+        rv, out = getstatusoutput('{} {}'.format(prg, flag))
+        assert rv == 0
+        assert re.match("usage", out, re.IGNORECASE)
 
 
 # --------------------------------------------------
@@ -93,7 +92,7 @@ def test_defaults():
         assert bases == 'ACGT'
 
         # the pct GC is about right
-        gc = list(map(lambda seq: GC(seq.seq) / 100, seqs))
+        gc = list(map(lambda seq: gc_fraction(seq.seq) / 100, seqs))
         assert .47 <= mean(gc) <= .53
 
     finally:
@@ -136,7 +135,7 @@ def test_options():
         assert bases == set('ACGU')
 
         # the pct GC is about right
-        gc = list(map(lambda seq: GC(seq.seq) / 100, seqs))
+        gc = list(map(lambda seq: gc_fraction(seq.seq) / 100, seqs))
         assert pct_gc - .3 <= mean(gc) <= pct_gc + .3
 
     finally:

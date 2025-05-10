@@ -28,7 +28,7 @@ def get_args():
                        metavar='str',
                        type=str,
                        default='dna',
-                       choices=['dna', 'rna', 'DNA', 'RNA'])
+                       choices=['dna', 'rna'])
 
     parser.add_argument('-n',
                        '--numseqs',
@@ -72,7 +72,7 @@ def get_args():
 
     args.seqtype = args.seqtype.lower()
     return args
-
+#validate good sequence
 def validate_sequence(seq, seq_type):
     """Validate that sequence contains only valid bases"""
     valid_bases = {'dna': set('ACGT'), 'rna': set('ACGU')}
